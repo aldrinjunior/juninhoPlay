@@ -2,6 +2,7 @@ package com.example.juninhoplay.service.repository
 
 import android.util.Log
 import com.example.juninhoplay.service.model.GetMoviesResponse
+import com.example.juninhoplay.service.model.Movie
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -21,7 +22,11 @@ object MoviesRepository {
         api = retrofit.create(Api::class.java)
     }
 
-    fun getPopularMovies(page: Int = 1) {
+    fun getPopularMovies(
+        page: Int = 1,
+        onSucess: (movies: List<Movie>) -> Unit,
+        onError: () -> Unit
+        ) {
         api.getPopularMovies(page = page)
             .enqueue(object : Callback<GetMoviesResponse> {
                 override fun onResponse(
@@ -32,15 +37,17 @@ object MoviesRepository {
                         val responseBody = response.body()
 
                         if (responseBody != null) {
-                            Log.d("Repository", "Movies: ${responseBody.movies}")
+                            onSucess.invoke(responseBody.movies)
                         } else {
-                            Log.d("Repository", "Failed to get response")
+                            onError.invoke()
                         }
+                    } else {
+                        onError.invoke()
                     }
                 }
 
                 override fun onFailure(call: Call<GetMoviesResponse>, t: Throwable) {
-                    Log.e("Repository", "onFailure", t)
+                    onError.invoke()
                 }
             })
     }
