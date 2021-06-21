@@ -24,7 +24,7 @@ object MoviesRepository {
 
     fun getPopularMovies(
         page: Int = 1,
-        onSucess: (movies: List<Movie>) -> Unit,
+        onSuccess: (movies: List<Movie>) -> Unit,
         onError: () -> Unit
         ) {
         api.getPopularMovies(page = page)
@@ -37,7 +37,7 @@ object MoviesRepository {
                         val responseBody = response.body()
 
                         if (responseBody != null) {
-                            onSucess.invoke(responseBody.movies)
+                            onSuccess.invoke(responseBody.movies)
                         } else {
                             onError.invoke()
                         }
